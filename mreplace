@@ -1,0 +1,33 @@
+#! /usr/bin/python
+import os
+import sys
+import iopro
+args=[]; shallow=False; folders=[]; total=0
+for each in sys.argv:
+    if each=='-s':
+        shallow=True
+    else:
+        args.append(each)
+u=os.listdir(args[1])
+for each in u:
+    folders.append(args[1]+each)
+while folders:
+    for each in folders:
+        path=folders.pop() #A messed up hack to use list length
+        folder_or_file=iopro.file_or_dir(path)
+        if folder_or_file==0: 
+            if not shallow:
+                for each in os.listdir(path):
+                    folders.append('%s/%s'%(path,each))
+        if folder_or_file==1:
+            total+=1
+            file=open(path,'r')
+            str=file.read()
+            file.close()
+            str=str.replace(args[2].strip('"').strip("'"),args[3].strip('"').strip("'"))
+            file=open(path,'w')
+            file.write(str)
+            file.close()
+print('----------------')
+print('mReplace Done...')
+print('Checked %s Files'%total)
